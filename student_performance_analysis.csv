@@ -32,7 +32,7 @@ student_id,gender,hours_studied,attendance_percent,assignments_completed,test_sc
 31,Female,6.3,91,6,77.9
 32,Male,7.6,92,7,78.8
 33,Female,8.9,93,8,79.7
-34,Male,10.2,94,9,80.6
+34,Male,10.2,,9,80.6
 35,Female,11.5,95,10,81.5
 36,Male,12.8,96,11,82.4
 37,Female,14.1,97,12,83.3
@@ -48,4 +48,5 @@ student_id,gender,hours_studied,attendance_percent,assignments_completed,test_sc
 47,Female,14.1,67,12,92.3
 48,Male,15.4,68,13,93.2
 49,Female,16.7,69,14,94.1
+50,Male,5.0,70,5,50.0
 50,Male,5.0,70,5,50.0
