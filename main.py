@@ -57,18 +57,263 @@ if file1:
     st.subheader("Очищенные данные:")
     st.dataframe(df_clean)
     
-    # Визуализация
-    st.header("5. Визуализация")
+    # ---------- ШАГ 5: ФИЛЬТРАЦИЯ ДАННЫХ ----------
+    st.header("5. Фильтрация данных")
+    
+    # Получаем все колонки для фильтрации
+    all_columns = df_clean.columns.tolist()
+    
+    # Первый фильтр
+    st.subheader("Фильтр 1:")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        filter_col1 = st.selectbox(
+            "Выберите колонку для фильтрации:",
+            options=["Не фильтровать"] + all_columns,
+            key="filter_col1"
+        )
+    
+    with col2:
+        if filter_col1 != "Не фильтровать":
+            # Для числовых колонок
+            if df_clean[filter_col1].dtype in ['int64', 'float64']:
+                filter_operator1 = st.selectbox(
+                    "Оператор:",
+                    ["Больше чем (>)", "Меньше чем (<)", "Равно (=)", "Между"],
+                    key="filter_op1_num"
+                )
+            # Для текстовых колонок
+            else:
+                filter_operator1 = st.selectbox(
+                    "Оператор:",
+                    ["Равно (=)", "Содержит", "Не содержит"],
+                    key="filter_op1_text"
+                )
+    
+    with col3:
+        if filter_col1 != "Не фильтровать":
+            if df_clean[filter_col1].dtype in ['int64', 'float64']:
+                # Числовые значения
+                unique_vals = df_clean[filter_col1].dropna().unique()
+                if len(unique_vals) > 0:
+                    min_val = float(df_clean[filter_col1].min())
+                    max_val = float(df_clean[filter_col1].max())
+                    
+                    if filter_operator1 == "Между":
+                        col_range1, col_range2 = st.columns(2)
+                        with col_range1:
+                            filter_value1_min = st.number_input(
+                                "От:", 
+                                min_value=min_val, 
+                                max_value=max_val,
+                                value=min_val,
+                                key="filter_val1_min"
+                            )
+                        with col_range2:
+                            filter_value1_max = st.number_input(
+                                "До:", 
+                                min_value=min_val, 
+                                max_value=max_val,
+                                value=max_val,
+                                key="filter_val1_max"
+                            )
+                        filter_value1 = (filter_value1_min, filter_value1_max)
+                    else:
+                        filter_value1 = st.number_input(
+                            "Значение:", 
+                            min_value=min_val, 
+                            max_value=max_val,
+                            value=float(df_clean[filter_col1].median()),
+                            key="filter_val1"
+                        )
+            else:
+                # Текстовые значения
+                unique_vals = df_clean[filter_col1].dropna().unique()
+                if len(unique_vals) > 0:
+                    filter_value1 = st.selectbox(
+                        "Значение:",
+                        options=["Введите значение"] + sorted([str(v) for v in unique_vals]),
+                        key="filter_val1_text"
+                    )
+    
+    # Второй фильтр (опционально)
+    st.subheader("Фильтр 2 (опционально):")
+    col4, col5, col6 = st.columns(3)
+    
+    with col4:
+        filter_col2 = st.selectbox(
+            "Выберите колонку для фильтрации:",
+            options=["Не использовать"] + [c for c in all_columns if c != filter_col1 or filter_col1 == "Не фильтровать"],
+            key="filter_col2"
+        )
+    
+    with col5:
+        if filter_col2 != "Не использовать":
+            if df_clean[filter_col2].dtype in ['int64', 'float64']:
+                filter_operator2 = st.selectbox(
+                    "Оператор:",
+                    ["Больше чем (>)", "Меньше чем (<)", "Равно (=)", "Между"],
+                    key="filter_op2_num"
+                )
+            else:
+                filter_operator2 = st.selectbox(
+                    "Оператор:",
+                    ["Равно (=)", "Содержит", "Не содержит"],
+                    key="filter_op2_text"
+                )
+    
+    with col6:
+        if filter_col2 != "Не использовать":
+            if df_clean[filter_col2].dtype in ['int64', 'float64']:
+                unique_vals = df_clean[filter_col2].dropna().unique()
+                if len(unique_vals) > 0:
+                    min_val = float(df_clean[filter_col2].min())
+                    max_val = float(df_clean[filter_col2].max())
+                    
+                    if filter_operator2 == "Между":
+                        col_range1, col_range2 = st.columns(2)
+                        with col_range1:
+                            filter_value2_min = st.number_input(
+                                "От:", 
+                                min_value=min_val, 
+                                max_value=max_val,
+                                value=min_val,
+                                key="filter_val2_min"
+                            )
+                        with col_range2:
+                            filter_value2_max = st.number_input(
+                                "До:", 
+                                min_value=min_val, 
+                                max_value=max_val,
+                                value=max_val,
+                                key="filter_val2_max"
+                            )
+                        filter_value2 = (filter_value2_min, filter_value2_max)
+                    else:
+                        filter_value2 = st.number_input(
+                            "Значение:", 
+                            min_value=min_val, 
+                            max_value=max_val,
+                            value=float(df_clean[filter_col2].median()),
+                            key="filter_val2"
+                        )
+            else:
+                unique_vals = df_clean[filter_col2].dropna().unique()
+                if len(unique_vals) > 0:
+                    filter_value2 = st.selectbox(
+                        "Значение:",
+                        options=["Введите значение"] + sorted([str(v) for v in unique_vals]),
+                        key="filter_val2_text"
+                    )
+    
+    # Применяем фильтры
+    if st.button("Применить фильтры", type="primary"):
+        filtered_df = df_clean.copy()
+        
+        # Применяем первый фильтр
+        if filter_col1 != "Не фильтровать":
+            if df_clean[filter_col1].dtype in ['int64', 'float64']:
+                if filter_operator1 == "Больше чем (>)":
+                    filtered_df = filtered_df[filtered_df[filter_col1] > filter_value1]
+                elif filter_operator1 == "Меньше чем (<)":
+                    filtered_df = filtered_df[filtered_df[filter_col1] < filter_value1]
+                elif filter_operator1 == "Равно (=)":
+                    filtered_df = filtered_df[filtered_df[filter_col1] == filter_value1]
+                elif filter_operator1 == "Между":
+                    filtered_df = filtered_df[
+                        (filtered_df[filter_col1] >= filter_value1[0]) & 
+                        (filtered_df[filter_col1] <= filter_value1[1])
+                    ]
+            else:
+                if filter_operator1 == "Равно (=)":
+                    filtered_df = filtered_df[filtered_df[filter_col1] == filter_value1]
+                elif filter_operator1 == "Содержит":
+                    filtered_df = filtered_df[filtered_df[filter_col1].astype(str).str.contains(str(filter_value1), na=False)]
+                elif filter_operator1 == "Не содержит":
+                    filtered_df = filtered_df[~filtered_df[filter_col1].astype(str).str.contains(str(filter_value1), na=False)]
+        
+        # Применяем второй фильтр
+        if filter_col2 != "Не использовать":
+            if df_clean[filter_col2].dtype in ['int64', 'float64']:
+                if filter_operator2 == "Больше чем (>)":
+                    filtered_df = filtered_df[filtered_df[filter_col2] > filter_value2]
+                elif filter_operator2 == "Меньше чем (<)":
+                    filtered_df = filtered_df[filtered_df[filter_col2] < filter_value2]
+                elif filter_operator2 == "Равно (=)":
+                    filtered_df = filtered_df[filtered_df[filter_col2] == filter_value2]
+                elif filter_operator2 == "Между":
+                    filtered_df = filtered_df[
+                        (filtered_df[filter_col2] >= filter_value2[0]) & 
+                        (filtered_df[filter_col2] <= filter_value2[1])
+                    ]
+            else:
+                if filter_operator2 == "Равно (=)":
+                    filtered_df = filtered_df[filtered_df[filter_col2] == filter_value2]
+                elif filter_operator2 == "Содержит":
+                    filtered_df = filtered_df[filtered_df[filter_col2].astype(str).str.contains(str(filter_value2), na=False)]
+                elif filter_operator2 == "Не содержит":
+                    filtered_df = filtered_df[~filtered_df[filter_col2].astype(str).str.contains(str(filter_value2), na=False)]
+        
+        st.success(f"✅ Данные отфильтрованы! Осталось {len(filtered_df)} из {len(df_clean)} строк")
+        
+        # Показываем отфильтрованные данные
+        st.subheader("Отфильтрованные данные:")
+        st.dataframe(filtered_df)
+        
+        # Обновляем основную таблицу
+        df_clean = filtered_df
+    else:
+        # Если фильтры не применены, показываем исходные данные
+        st.info("Настройте фильтры и нажмите 'Применить фильтры'")
+    
+    # ---------- ШАГ 6: СОРТИРОВКА ДАННЫХ ----------
+    st.header("6. Сортировка данных")
+    
+    # Выбираем колонку для сортировки
+    sort_column = st.selectbox(
+        "Выберите колонку для сортировки:",
+        options=df_clean.columns.tolist(),
+        key="sort_column"
+    )
+    
+    # Выбираем порядок сортировки
+    sort_order = st.radio(
+        "Порядок сортировки:",
+        ["По возрастанию (A-Z, 0-9)", "По убыванию (Z-A, 9-0)"],
+        horizontal=True,
+        key="sort_order"
+    )
+    
+    # Применяем сортировку
+    if sort_column:
+        ascending = sort_order == "По возрастанию (A-Z, 0-9)"
+        df_sorted = df_clean.sort_values(by=sort_column, ascending=ascending)
+        
+        st.write(f"**Данные отсортированы по колонке:** {sort_column}")
+        st.write(f"**Порядок:** {'По возрастанию' if ascending else 'По убыванию'}")
+        
+        # Показываем отсортированные данные
+        st.dataframe(df_sorted)
+        
+        # Обновляем основную таблицу на отсортированную
+        df_clean = df_sorted
+    else:
+        st.info("Выберите колонку для сортировки")
+    
+    # ---------- ГРАФИКИ ----------
+    st.header("7. Визуализация")
     
     if numeric_cols:
         # Выбор типа графика
         chart_type = st.selectbox(
             "Выберите тип графика:",
-            ["Гистограмма", "Линейный график", "Столбчатая диаграмма", "Точечная диаграмма"]
+            ["Гистограмма", "Линейный график", "Столбчатая диаграмма", "Точечная диаграмма"],
+            key="chart_type"
         )
         
         if chart_type == "Гистограмма":
-            col_for_hist = st.selectbox("Выберите колонку:", numeric_cols)
+            col_for_hist = st.selectbox("Выберите колонку:", numeric_cols, key="hist_col")
             fig, ax = plt.subplots(figsize=(10, 6))
             df_clean[col_for_hist].hist(bins=30, ax=ax, color='skyblue', edgecolor='black')
             ax.set_title(f'Распределение {col_for_hist}')
@@ -79,8 +324,8 @@ if file1:
             
         elif chart_type == "Линейный график":
             if len(numeric_cols) >= 2:
-                x_col = st.selectbox("Ось X:", numeric_cols)
-                y_col = st.selectbox("Ось Y:", [c for c in numeric_cols if c != x_col])
+                x_col = st.selectbox("Ось X:", numeric_cols, key="line_x")
+                y_col = st.selectbox("Ось Y:", [c for c in numeric_cols if c != x_col], key="line_y")
                 fig, ax = plt.subplots(figsize=(10, 6))
                 ax.plot(df_clean[x_col], df_clean[y_col], 'o-', markersize=4, linewidth=2)
                 ax.set_title(f'{y_col} по {x_col}')
@@ -94,8 +339,8 @@ if file1:
             # Найдем категориальные колонки
             cat_cols = df_clean.select_dtypes(include=['object']).columns.tolist()
             if cat_cols and numeric_cols:
-                cat_col = st.selectbox("Категория:", cat_cols)
-                num_col = st.selectbox("Значение:", numeric_cols)
+                cat_col = st.selectbox("Категория:", cat_cols, key="bar_cat")
+                num_col = st.selectbox("Значение:", numeric_cols, key="bar_val")
                 
                 # Группируем и строим график
                 grouped = df_clean.groupby(cat_col)[num_col].mean().sort_values(ascending=False)
@@ -125,7 +370,7 @@ if file1:
             plt.close()
     
     # Merge с другой таблицей
-    st.header("6. Объединение таблиц")
+    st.header("8. Объединение таблиц")
     file2 = st.file_uploader("Загрузите вторую таблицу (необязательно)", type=["csv"], key="file2")
     
     if file2:
@@ -142,7 +387,7 @@ if file1:
         if common_cols:
             st.write(f"**Общие колонки:** {common_cols}")
             
-            merge_col = st.selectbox("Выберите колонку для объединения:", common_cols)
+            merge_col = st.selectbox("Выберите колонку для объединения:", common_cols, key="merge_col")
             
             # Все виды merge - показываем ВСЕ данные
             st.subheader("INNER JOIN (только совпадения)")
@@ -175,7 +420,7 @@ if file1:
                 st.dataframe(concat_df)
     
     # Сохранение
-    st.header("7. Сохранение результатов")
+    st.header("9. Сохранение результатов")
     
     csv_data = df_clean.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig')
     st.download_button(

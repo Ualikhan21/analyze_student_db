@@ -1,45 +1,45 @@
-```markdown
-# 📊 CSV Data Analyzer
+📊 CSV Data Analyzer
 
 A comprehensive Streamlit application for analyzing CSV files with data merging, visualization, and export capabilities.
 
-## 🎯 Features
+🎯 Features
 
-### Core Functionality
-- **CSV Upload**: Upload and process multiple CSV files
-- **Full Data Display**: View complete datasets without truncation
-- **Statistical Analysis**: Automatic descriptive statistics for numeric columns
-- **Data Cleaning**: Remove duplicates and handle missing values
-- **Data Visualization**: 4 chart types with image export capabilities
-- **Data Merging**: All SQL-style joins (INNER, LEFT, RIGHT, FULL OUTER, CONCAT)
-- **Export Results**: Download processed data in CSV format
+Core Functionality
+	•	CSV Upload: Upload and process multiple CSV files
+	•	Full Data Display: View complete datasets without truncation
+	•	Statistical Analysis: Automatic descriptive statistics for numeric columns
+	•	Data Cleaning: Remove duplicates and handle missing values
+	•	Data Visualization: 4 chart types with image export capabilities
+	•	Data Merging: All SQL-style joins (INNER, LEFT, RIGHT, FULL OUTER, CONCAT)
+	•	Export Results: Download processed data in CSV format
 
-### Data Visualization Options
-1. **Histogram**: Distribution analysis for numeric variables
-2. **Line Chart**: Trend analysis between variables
-3. **Bar Chart**: Categorical data comparison
-4. **Scatter Plot**: Relationship analysis between two numeric variables
+Data Visualization Options
+	1.	Histogram – Distribution analysis for numeric variables
+	2.	Line Chart – Trend analysis between variables
+	3.	Bar Chart – Categorical data comparison
+	4.	Scatter Plot – Relationship analysis between numeric variables
 
-### Merge Operations Supported
-- **INNER JOIN**: Only matching rows from both tables
-- **LEFT JOIN**: All rows from left table + matching from right
-- **RIGHT JOIN**: All rows from right table + matching from left
-- **FULL OUTER JOIN**: All rows from both tables
-- **CONCATENATE**: Simple vertical stacking of tables
+Merge Operations Supported
+	•	INNER JOIN – Only matching rows from both tables
+	•	LEFT JOIN – All rows from left table + matching from right
+	•	RIGHT JOIN – All rows from right table + matching from left
+	•	FULL OUTER JOIN – All rows from both tables
+	•	CONCATENATE – Simple vertical stacking of tables
 
-## 📦 Installation
+⸻
 
-### Prerequisites
-- Python 3.8 or higher
-- pip package manager
+📦 Installation
+
+Prerequisites
+	•	Python 3.8+
+	•	pip
 
 ### Step-by-Step Setup
 
 1. **Clone the repository**
-```bash
 git clone https://github.com/Ualikhan21/analyze_student_db.git
 cd csv-data-analyzer
-```
+
 
 2. **Create virtual environment (recommended)**
 ```bash
